@@ -1,0 +1,99 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 986 >>
+stream
+BT
+/F1 11 Tf
+13 TL
+50 760 Td
+(MISSOURI RESIDENTIAL REAL ESTATE SALE CONTRACT \(SYNTHETIC TEST DOCUMENT\)) Tj
+T*
+() Tj
+T*
+(Property Address: 999 Synthetic Test Blvd, Testville, MO 65000) Tj
+T*
+(Buyer\(s\): Testy QA-Buyer and Sample QA-Buyer) Tj
+T*
+(Seller\(s\): Fake QA-Seller) Tj
+T*
+(Purchase Price: $123,456.00) Tj
+T*
+(Financing: Conventional loan. Buyer to obtain financing.) Tj
+T*
+(Earnest Money: $1,000.00 due within 5 days after Effective Date,) Tj
+T*
+(to be deposited with the escrow agent.) Tj
+T*
+(Closing Date: June 30, 2026) Tj
+T*
+(Inspection Deadline: June 12, 2026) Tj
+T*
+(Title Objection Deadline: June 18, 2026) Tj
+T*
+(Property Year Built: 1962) Tj
+T*
+(Home Warranty: Seller agrees to provide a home warranty up to $500.) Tj
+T*
+(Personal Property: Refrigerator and washer/dryer are included in the sale.) Tj
+T*
+(Exhibit A \(Legal Description\) is attached and incorporated by reference.) Tj
+T*
+(Lead-Based Paint Disclosure to be provided as a separate attachment.) Tj
+T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 382 >>
+stream
+BT
+/F1 11 Tf
+13 TL
+50 760 Td
+(SIGNATURES \(SYNTHETIC TEST DOCUMENT - PAGE 2\)) Tj
+T*
+() Tj
+T*
+(Buyer signature: ____________________  Date: ______) Tj
+T*
+(Seller signature: ___________________  Date: ______) Tj
+T*
+() Tj
+T*
+(Inspection resolution deadline to be agreed by the parties.) Tj
+T*
+(This synthetic document is for software testing only and is not a real contract.) Tj
+T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+0000001354 00000 n 
+0000001480 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+1913
+%%EOF

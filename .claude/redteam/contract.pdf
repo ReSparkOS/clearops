@@ -1,0 +1,64 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 745 >>
+stream
+BT /F1 11 Tf 50 750 Td 14 TL
+(MISSOURI RESIDENTIAL SALE CONTRACT \(SYNTHETIC TEST DOCUMENT\)) Tj T*
+(THIS IS SYNTHETIC TEST DATA FOR SOFTWARE QA. NOT A REAL TRANSACTION.) Tj T*
+(Property: 999 Synthetic Test Blvd, Testville, MO 65000) Tj T*
+(Buyer: Testy QA-Buyer and Sample QA-Buyer) Tj T*
+(Seller: Fake QA-Seller) Tj T*
+(Purchase Price: $123,456) Tj T*
+(Earnest Money: $1,000 due within 5 days after Effective Date) Tj T*
+(Closing Date: June 30, 2026) Tj T*
+(Financing: Conventional loan of $100,000) Tj T*
+(Inspection Deadline: June 12, 2026) Tj T*
+(Title Objection Deadline: June 18, 2026) Tj T*
+(Year Built: 1970) Tj T*
+(Exhibit A \(Legal Description\) is attached and incorporated.) Tj T*
+(Lead-Based Paint Disclosure is attached.) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 6 0 R /Resources << /Font << /F1 7 0 R >> >> >>
+endobj
+6 0 obj
+<< /Length 293 >>
+stream
+BT /F1 11 Tf 50 750 Td 14 TL
+(PAGE 2 - SIGNATURES \(SYNTHETIC TEST DOCUMENT\)) Tj T*
+(Buyer signature: signed 06/05/2026) Tj T*
+(Seller signature: signed 06/05/2026) Tj T*
+(Seller agrees to provide a home warranty up to $500.) Tj T*
+(Personal property included: kitchen refrigerator.) Tj T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000001043 00000 n 
+0000001169 00000 n 
+0000001513 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+1583
+%%EOF
