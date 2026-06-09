@@ -1,5 +1,8 @@
 import { z } from "zod";
+import { getApiOrgContext } from "@/lib/auth/session";
+import { checkExtractionRateLimit, recordAuditEvent } from "@/lib/db/audit";
 import { persistExtractionResult } from "@/lib/db/persistence";
+import { transactionBelongsToOrganization } from "@/lib/db/transactions";
 import { getServerSupabaseConfig } from "@/lib/env";
 import { DataAccessError, toErrorPayload } from "@/lib/errors";
 import { combinePipelineResults } from "@/lib/extraction/combine-results";
@@ -21,6 +24,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   try {
     const { id } = await params;
 
+    const context = await getApiOrgContext(request);
+    if (!context) {
+      return Response.json({ error: "Authentication required." }, { status: 401 });
+    }
+    if (!(await transactionBelongsToOrganization(id, context.organizationId))) {
+      return Response.json({ error: "Transaction not found." }, { status: 404 });
+    }
+
+    const rateLimitError = await checkExtractionRateLimit(context.organizationId);
+    if (rateLimitError) {
+      return Response.json({ error: rateLimitError }, { status: 429 });
+    }
+
     let options: z.infer<typeof rerunOptionsSchema> = {};
     const body = await request.text();
     if (body.trim()) {
@@ -36,6 +52,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       }
       options = parsed.data;
     }
+
+    await recordAuditEvent({
+      organizationId: context.organizationId,
+      actorId: context.user.id,
+      action: "packet_rerun",
+      transactionId: id,
+      metadata: options.provider ? { provider: options.provider, model: options.model ?? null } : {},
+    });
 
     const supabase = createAdminClient();
 

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { checkExtractionRateLimit } from "@/lib/db/audit";
 import { persistExtractionResult } from "@/lib/db/persistence";
 import { runExtractionPipeline, type ExtractionPipelineResult } from "@/lib/extraction/pipeline";
 import { POST } from "./route";
@@ -18,12 +19,40 @@ vi.mock("@/lib/extraction/pipeline", async (importOriginal) => ({
   runExtractionPipeline: vi.fn(async () => openaiResult("contract.pdf", "doc-1", "residential_sale_contract")),
 }));
 
+vi.mock("@/lib/auth/session", () => ({
+  getApiOrgContext: vi.fn(async () => ({
+    user: { id: "33333333-3333-4333-8333-333333333333" },
+    organizationId: "22222222-2222-4222-8222-222222222222",
+    role: "owner",
+  })),
+}));
+
+vi.mock("@/lib/db/transactions", () => ({
+  transactionBelongsToOrganization: vi.fn(async () => true),
+}));
+
+vi.mock("@/lib/db/audit", () => ({
+  recordAuditEvent: vi.fn(async () => {}),
+  checkExtractionRateLimit: vi.fn(async () => null),
+}));
+
 const VALID_PDF = "%PDF-1.4 fake but valid header";
 
 describe("upload route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(runExtractionPipeline).mockResolvedValue(openaiResult("contract.pdf", "doc-1", "residential_sale_contract"));
+  });
+
+  it("returns 429 when the organization's extraction budget is exhausted", async () => {
+    vi.mocked(checkExtractionRateLimit).mockResolvedValueOnce("Extraction limit reached (20 packet runs per hour). Try again later.");
+
+    const formData = new FormData();
+    formData.append("files", new File([VALID_PDF], "contract.pdf", { type: "application/pdf" }));
+    const response = await POST(request(formData), { params: Promise.resolve({ id: "11111111-1111-4111-8111-111111111111" }) });
+
+    expect(response.status).toBe(429);
+    expect((await response.json()).error).toContain("Extraction limit reached");
   });
 
   it("rejects files that are not real PDFs (magic-byte check)", async () => {

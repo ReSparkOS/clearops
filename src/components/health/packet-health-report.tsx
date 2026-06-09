@@ -189,7 +189,17 @@ function DocumentsPanel({ transaction }: { transaction: TransactionRecord }) {
                 {document.pageStart ? ` · pp. ${document.pageStart}-${document.pageEnd ?? document.pageStart}` : ""}
               </p>
             </div>
-            <span className="shrink-0 text-xs font-semibold text-ink-muted">{formatPercent(document.confidence)}</span>
+            <div className="flex shrink-0 items-center gap-3">
+              <a
+                href={`/api/documents/${document.id}/url`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-semibold text-primary hover:text-primary-hover"
+              >
+                View PDF
+              </a>
+              <span className="text-xs font-semibold text-ink-muted">{formatPercent(document.confidence)}</span>
+            </div>
           </li>
         ))}
         {transaction.extraction.documents.length === 0 ? (

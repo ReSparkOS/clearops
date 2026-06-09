@@ -1,4 +1,7 @@
+import { getApiOrgContext } from "@/lib/auth/session";
+import { checkExtractionRateLimit, recordAuditEvent } from "@/lib/db/audit";
 import { persistExtractionResult } from "@/lib/db/persistence";
+import { transactionBelongsToOrganization } from "@/lib/db/transactions";
 import { DataAccessError, toErrorPayload } from "@/lib/errors";
 import { combinePipelineResults } from "@/lib/extraction/combine-results";
 import { runExtractionPipeline, type ExtractionPipelineResult } from "@/lib/extraction/pipeline";
@@ -12,6 +15,26 @@ const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25 MB
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+
+    const context = await getApiOrgContext(request);
+    if (!context) {
+      return Response.json({ error: "Authentication required." }, { status: 401 });
+    }
+    if (!(await transactionBelongsToOrganization(id, context.organizationId))) {
+      return Response.json({ error: "Transaction not found." }, { status: 404 });
+    }
+
+    const rateLimitError = await checkExtractionRateLimit(context.organizationId);
+    if (rateLimitError) {
+      return Response.json({ error: rateLimitError }, { status: 429 });
+    }
+
+    await recordAuditEvent({
+      organizationId: context.organizationId,
+      actorId: context.user.id,
+      action: "packet_upload",
+      transactionId: id,
+    });
 
     let formData: FormData;
     try {

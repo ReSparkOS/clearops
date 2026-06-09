@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { getApiOrgContext } from "@/lib/auth/session";
+import { recordAuditEvent } from "@/lib/db/audit";
 import { createTransactionRecord, listTransactionsForDashboard } from "@/lib/db/transactions";
 import { DataAccessError, toErrorPayload } from "@/lib/errors";
 
@@ -12,9 +14,14 @@ const createTransactionSchema = z.object({
   financingType: z.string().max(120).nullable().optional(),
 });
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    return Response.json({ transactions: await listTransactionsForDashboard() });
+    const context = await getApiOrgContext(request);
+    if (!context) {
+      return Response.json({ error: "Authentication required." }, { status: 401 });
+    }
+
+    return Response.json({ transactions: await listTransactionsForDashboard(context.organizationId) });
   } catch (error) {
     const status = error instanceof DataAccessError ? error.status : 500;
     return Response.json(toErrorPayload(error), { status });
@@ -23,9 +30,22 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const context = await getApiOrgContext(request);
+    if (!context) {
+      return Response.json({ error: "Authentication required." }, { status: 401 });
+    }
+
     const body = await request.json();
     const parsed = createTransactionSchema.parse(body);
-    const transaction = await createTransactionRecord(parsed);
+    const transaction = await createTransactionRecord(parsed, context.organizationId);
+
+    await recordAuditEvent({
+      organizationId: context.organizationId,
+      actorId: context.user.id,
+      action: "transaction_created",
+      transactionId: transaction.id,
+      metadata: { propertyAddress: transaction.propertyAddress },
+    });
 
     return Response.json(
       { id: transaction.id, status: transaction.status, mode: "supabase" },

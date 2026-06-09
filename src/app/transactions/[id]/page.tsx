@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { UploadCloud } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { requireOrgContext } from "@/lib/auth/session";
 import { buttonVariants } from "@/components/ui/button";
 import { PacketHealthReport } from "@/components/health/packet-health-report";
 import { getTransactionRecord } from "@/lib/db/transactions";
@@ -10,7 +11,8 @@ import { getTransactionRecord } from "@/lib/db/transactions";
 export default async function TransactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const { id } = await params;
-  const transaction = await getTransactionRecord(id);
+  const { organizationId } = await requireOrgContext();
+  const transaction = await getTransactionRecord(id, organizationId);
 
   if (!transaction) {
     notFound();

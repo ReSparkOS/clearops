@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { LogIn } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -70,6 +71,14 @@ export function LoginForm() {
         <LogIn size={16} aria-hidden="true" />
         {supabaseConfigured ? "Sign in" : "Continue"}
       </Button>
+      <div className="flex items-center justify-between text-sm">
+        <Link href="/forgot-password" className="font-medium text-ink-muted hover:text-ink">
+          Forgot password?
+        </Link>
+        <Link href="/signup" className="font-semibold text-primary hover:text-primary-hover">
+          Create account
+        </Link>
+      </div>
     </form>
   );
 }

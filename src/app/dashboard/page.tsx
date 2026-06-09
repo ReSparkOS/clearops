@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { FileText, FolderUp, Plus, TriangleAlert, UploadCloud } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { requireOrgContext } from "@/lib/auth/session";
 import { ContractCalendarPanel } from "@/components/dashboard/contract-calendar";
 import { StatusBadge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -16,7 +17,8 @@ import { formatCurrency, formatDate } from "@/lib/domain/format";
 export default async function DashboardPage() {
   await connection();
 
-  const transactions = await listTransactionsForDashboard();
+  const { organizationId } = await requireOrgContext();
+  const transactions = await listTransactionsForDashboard(organizationId);
   const needsReview = transactions.filter((transaction) => transaction.status === "needs_review").length;
   const highRisk = transactions.filter((transaction) => transaction.status === "high_risk").length;
   const uploaded = transactions.filter((transaction) => transaction.extraction.documents.length > 0).length;

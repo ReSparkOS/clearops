@@ -1,13 +1,15 @@
 import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
+import { requireOrgContext } from "@/lib/auth/session";
 import { UploadForm } from "@/components/upload/upload-form";
 import { getTransactionRecord } from "@/lib/db/transactions";
 
 export default async function UploadPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const { id } = await params;
-  const transaction = await getTransactionRecord(id);
+  const { organizationId } = await requireOrgContext();
+  const transaction = await getTransactionRecord(id, organizationId);
 
   if (!transaction) {
     notFound();

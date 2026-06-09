@@ -75,12 +75,13 @@ export type CreateTransactionInput = {
 const TRANSACTION_COLUMNS =
   "id, organization_id, property_address, buyer_names, seller_names, agent_team, closing_date, purchase_price, financing_type, packet_status, created_at, updated_at";
 
-export async function listTransactionsForDashboard(): Promise<TransactionRecord[]> {
+export async function listTransactionsForDashboard(organizationId: string): Promise<TransactionRecord[]> {
   const supabase = createAdminClient();
   const { data, error } = await withSchemaCacheRetry(() =>
     supabase
       .from("transactions")
       .select(TRANSACTION_COLUMNS)
+      .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false })
       .limit(100),
   );
@@ -96,14 +97,19 @@ export async function listTransactionsForDashboard(): Promise<TransactionRecord[
   return hydrateTransactionRows(data as SupabaseTransactionRow[]);
 }
 
-export async function getTransactionRecord(id: string): Promise<TransactionRecord | null> {
+export async function getTransactionRecord(id: string, organizationId: string): Promise<TransactionRecord | null> {
   if (!isUuid(id)) {
     return null;
   }
 
   const supabase = createAdminClient();
   const { data, error } = await withSchemaCacheRetry(() =>
-    supabase.from("transactions").select(TRANSACTION_COLUMNS).eq("id", id).maybeSingle(),
+    supabase
+      .from("transactions")
+      .select(TRANSACTION_COLUMNS)
+      .eq("id", id)
+      .eq("organization_id", organizationId)
+      .maybeSingle(),
   );
 
   if (error) {
@@ -118,9 +124,11 @@ export async function getTransactionRecord(id: string): Promise<TransactionRecor
   return record ?? null;
 }
 
-export async function createTransactionRecord(input: CreateTransactionInput): Promise<TransactionRecord> {
+export async function createTransactionRecord(
+  input: CreateTransactionInput,
+  organizationId: string,
+): Promise<TransactionRecord> {
   const supabase = createAdminClient();
-  const organizationId = await ensureBetaOrganization(supabase);
 
   const { data, error } = await withSchemaCacheRetry(() =>
     supabase
@@ -253,26 +261,21 @@ async function hydrateTransactionRows(rows: SupabaseTransactionRow[]): Promise<T
   );
 }
 
-async function ensureBetaOrganization(supabase: ReturnType<typeof createAdminClient>) {
-  const name = "Clear Close IQ";
-
-  const existing = await withSchemaCacheRetry(() =>
-    supabase.from("organizations").select("id").eq("name", name).maybeSingle(),
-  );
-  if (existing.error) {
-    throw asDataAccessError(existing.error, "Could not look up the organization.");
-  }
-  if (existing.data?.id) {
-    return existing.data.id as string;
+/** Cheap membership check used by API routes before acting on a transaction. */
+export async function transactionBelongsToOrganization(id: string, organizationId: string): Promise<boolean> {
+  if (!isUuid(id)) {
+    return false;
   }
 
-  const created = await withSchemaCacheRetry(() =>
-    supabase.from("organizations").insert({ name }).select("id").single(),
+  const supabase = createAdminClient();
+  const { data, error } = await withSchemaCacheRetry(() =>
+    supabase.from("transactions").select("id").eq("id", id).eq("organization_id", organizationId).maybeSingle(),
   );
-  if (created.error || !created.data) {
-    throw asDataAccessError(created.error ?? { message: "Organization create returned no row." }, "Could not create the organization.");
+
+  if (error) {
+    throw asDataAccessError(error, "Could not verify transaction access.");
   }
-  return created.data.id as string;
+  return Boolean(data);
 }
 
 function groupByTransaction(rows: SupabaseDocumentRow[] | null) {
