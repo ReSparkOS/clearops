@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getPublicSupabaseConfig } from "@/lib/env";
 
 // Pages reachable without a session. Everything else requires login.
-const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/reset-password"];
+const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/reset-password", "/legal"];
 
 // API paths that authenticate themselves by other means (cron secret).
 const SELF_AUTHENTICATED_API_PREFIXES = ["/api/cron/"];

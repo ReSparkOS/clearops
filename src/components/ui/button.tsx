@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "primary" | "secondary" | "ghost" | "danger" | "ghost-danger";
 type Size = "sm" | "md";
 
 const BASE =
@@ -17,6 +17,7 @@ const VARIANTS: Record<Variant, string> = {
   secondary: "border border-line bg-surface text-ink shadow-card hover:bg-surface-muted",
   ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
   danger: "bg-rose-600 text-white shadow-card hover:bg-rose-700",
+  "ghost-danger": "text-rose-600 hover:bg-rose-50 hover:text-rose-700",
 };
 
 export function buttonVariants({

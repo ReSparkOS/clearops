@@ -5,7 +5,10 @@ export type AuditAction =
   | "packet_upload"
   | "packet_rerun"
   | "flag_status_changed"
-  | "document_viewed";
+  | "document_viewed"
+  | "member_invited"
+  | "member_role_changed"
+  | "member_removed";
 
 /**
  * Writes one row to audit_logs. Auditing must never take down the user-facing
@@ -79,6 +82,30 @@ export async function checkExtractionRateLimit(organizationId: string): Promise<
 
   if (used >= limit) {
     return `Extraction limit reached (${limit} packet runs per hour). Try again later.`;
+  }
+  return null;
+}
+
+const INVITE_ACTIONS: AuditAction[] = ["member_invited"];
+
+/**
+ * Returns an error message when the org has exhausted its hourly invite budget, else null.
+ * Each invite triggers a real outbound email, so this caps email-bombing / spam amplification.
+ */
+export async function checkInviteRateLimit(organizationId: string): Promise<string | null> {
+  const limit = Number(process.env.INVITE_RATE_LIMIT_PER_HOUR ?? 20);
+  if (!Number.isFinite(limit) || limit <= 0) {
+    return null;
+  }
+
+  const used = await countRecentAuditEvents({
+    organizationId,
+    actions: INVITE_ACTIONS,
+    windowMs: 60 * 60 * 1000,
+  });
+
+  if (used >= limit) {
+    return `Invite limit reached (${limit} invites per hour). Try again later.`;
   }
   return null;
 }

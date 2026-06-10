@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, type ComponentType, type ReactNode } from "react";
-import { FilePlus2, LayoutDashboard, Menu, Settings, X } from "lucide-react";
+import { FilePlus2, LayoutDashboard, Menu, Settings, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; label: string; icon: ComponentType<{ size?: number; className?: string }> };
@@ -12,6 +12,7 @@ type NavItem = { href: string; label: string; icon: ComponentType<{ size?: numbe
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/transactions/new", label: "New transaction", icon: FilePlus2 },
+  { href: "/settings/team", label: "Team", icon: Users },
   { href: "/settings/rules", label: "Rules", icon: Settings },
 ];
 

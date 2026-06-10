@@ -14,6 +14,7 @@ import { DataAccessError } from "@/lib/errors";
 import { packetDocumentSchema, packetFactsSchema } from "@/lib/extraction/pipeline";
 import { packetStatusFromFlags, runMissouriResidentialRules } from "@/lib/rules/missouri";
 import { createAdminClient, withSchemaCacheRetry } from "@/lib/supabase/server";
+import { isUuid } from "@/lib/utils";
 
 export type SupabaseTransactionRow = {
   id: string;
@@ -406,10 +407,6 @@ function healthStatusFromPacketStatus(status: PacketStatus): RuleEngineResult["p
   if (status === "high_risk") return "high_risk";
   if (status === "cleared") return "cleared";
   return "needs_review";
-}
-
-function isUuid(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
